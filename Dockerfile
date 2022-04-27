@@ -4,7 +4,7 @@ FROM ubuntu:impish-20220404
 
 RUN apt update && \
 
-    DEBIAN_FRONTEND=noninteractive apt install -y ubuntu-desktop xrdp locales sudo tigervnc-standalone-server && \
+    DEBIAN_FRONTEND=noninteractive apt install -y ubuntu-budgie-desktop xrdp locales sudo tigervnc-standalone-server && \
 
     adduser xrdp ssl-cert && \
 
@@ -26,15 +26,20 @@ RUN useradd -m $USER -p $(openssl passwd $PASS) && \
 
     chsh -s /bin/bash $USER
 
+RUN sed -i '3 a echo "\
+
+budgie-panel & budgie-wm --x11 & plank" > ~/.Xsession' /etc/xrdp/startwm.sh
 
 
 RUN echo "#!/bin/sh\n\
+
+export XDG_SESSION_DESKTOP=budgie-desktop\n\
 
 export GNOME_SHELL_SESSION_MODE=ubuntu\n\
 
 export XDG_SESSION_TYPE=x11\n\
 
-export XDG_CURRENT_DESKTOP=ubuntu:GNOME\n\
+export XDG_CURRENT_DESKTOP=Budgie:GNOME\n\
 
 export XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg" > /env && chmod 555 /env
 
